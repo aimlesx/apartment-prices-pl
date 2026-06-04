@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+**/__pycache__
+**/.ipynb_checkpoints
+training/data
+notebooks
+docs
+mlruns
+mlartifacts
+*.md
+.pre-commit-config.yaml

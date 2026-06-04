@@ -1,0 +1,8 @@
+# Konfiguracja kedro-mlflow. Pełny plik wygeneruje `kedro mlflow init`.
+# Ustaw mlflow_tracking_uri na http://localhost:5000, gdy działa serwer MLflow.
+server:
+  mlflow_tracking_uri: null   # null -> lokalny ./mlruns
+
+tracking:
+  experiment:
+    name: apartment-prices

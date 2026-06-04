@@ -1,0 +1,23 @@
+[project]
+name = "apartment-prices-serving"
+version = "0.1.0"
+description = "Serwis inferencyjny FastAPI + Prometheus dla modelu cen mieszkań"
+requires-python = ">=3.10"
+# MINIMALNE zależności — bez Kedro/PyCaret/Optuna, aby obraz Dockera był lekki.
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.9",
+    "pandas~=2.2",
+    "scikit-learn~=1.5",
+    "lightgbm>=4.5",
+    "mlflow-skinny>=2.16",   # ładowanie modelu z Registry (lekki klient)
+    "prometheus-client>=0.21",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["apartment_serving*"]

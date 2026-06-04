@@ -1,0 +1,41 @@
+[project]
+name = "apartment-prices-training"
+version = "0.1.0"
+description = "Kedro: pozyskanie danych, preprocessing, inżynieria cech, modelowanie i ewaluacja"
+requires-python = ">=3.10"
+dependencies = [
+    "kedro[jupyter]~=1.2.0",
+    "kedro-datasets[pandas-csvdataset,pandas-parquetdataset]>=9.1",
+    "kedro-viz>=6.7",
+    "kedro-mlflow>=0.13",
+    "mlflow>=2.16",
+    "scikit-learn~=1.5",
+    "pandas~=2.2",
+    "numpy>=1.26",
+    "lightgbm>=4.5",
+    "xgboost>=2.1",
+    "optuna>=4.0",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+]
+
+# PyCaret jest CELOWO poza rdzeniowym lockiem (kwarantanna) — sztywno pinuje stare
+# scikit-learn/numpy/scipy, które kolidują z Kedro 1.2 + LightGBM + Optuna w jednym
+# rozwiązaniu uv. Leaderboard AutoML uruchamiamy w izolowanym venv:
+#   uv venv .venv-automl && uv pip install -r requirements-automl.txt
+# Szczegóły decyzji: internals/decisions.md (D5) oraz internals/schedule.md (T03).
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.kedro]
+package_name = "apartment_prices"
+project_name = "apartment-prices"
+kedro_init_version = "1.2.0"
+tools = "['Linting', 'Testing', 'Custom Logging', 'Data Structure']"
+example_pipeline = "false"
+source_dir = "src"

@@ -1,0 +1,15 @@
+# Katalog danych Kedro — oddziela kod od źródeł danych.
+# Dane (data/**) są poza gitem; rozpakuj archive.zip do data/01_raw/ (zob. `make data`).
+
+# Surowe miesięczne pliki CSV z Kaggle (sprzedaż + najem) jako partycje.
+apartments_raw_partitions:
+  type: partitions.PartitionedDataset
+  path: data/01_raw
+  filename_suffix: ".csv"
+  dataset:
+    type: pandas.CSVDataset
+
+# Scalone dane sprzedaży — wynik pipeline'u data_processing.
+apartments_ingested:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/apartments_ingested.parquet

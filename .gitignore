@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Środowiska / uv (uv.lock JEST commitowany)
+.venv/
+venv/
+
+# Kedro — dane (trzymamy tylko strukturę katalogów przez .gitkeep)
+training/data/**
+!training/data/**/
+!training/data/**/.gitkeep
+# Kedro — lokalne sekrety/nadpisania
+training/conf/local/**
+!training/conf/local/.gitkeep
+info.log
+logs/
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Artefakty modeli
+*.pkl
+*.joblib
+
+# Sekrety / env
+.env
+*.env
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Dokumenty wewnętrzne (planowanie / notatki — poza repozytorium)
+internals/
