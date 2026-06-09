@@ -1,0 +1,5 @@
+# Parametry pipeline'u data_processing (deduplikacja i czyszczenie).
+cleaning:
+  sale_ownership: [condominium, cooperative]   # pomijamy artefakt 'udział'
+  price_min: 150000                            # dane Kaggle są przycięte do tego zakresu
+  price_max: 3250000

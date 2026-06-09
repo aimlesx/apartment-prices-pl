@@ -35,6 +35,8 @@ ignore = ["E501"]           # długość linii pilnuje formatter
 [tool.ruff.lint.per-file-ignores]
 # Notebooki: print() i importy w dalszych komórkach to normalna praktyka eksploracyjna.
 "notebooks/**" = ["T201", "E402", "PLR2004"]
+# Testy: literały w asercjach (magic values) są tu normalne i czytelne.
+"**/tests/**" = ["PLR2004"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --import-mode=importlib"

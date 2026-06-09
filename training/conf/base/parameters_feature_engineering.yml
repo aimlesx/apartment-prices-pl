@@ -1,0 +1,20 @@
+# Kontrakt cech (dokumentacja). Autorytatywne źródło to stałe w module
+# apartment_prices.pipelines.feature_engineering.nodes - ta sama funkcja
+# (engineer_features) działa w notebooku, Kedro i serwisie FastAPI (wszędzie tak samo).
+feature_contract:
+  reference_year: 2024
+  categorical: [city, type, ownership, buildingMaterial, condition]
+  bool_cols: [hasParkingSpace, hasBalcony, hasElevator, hasSecurity, hasStorageRoom]
+  poi_cols:
+    [
+      schoolDistance,
+      clinicDistance,
+      postOfficeDistance,
+      kindergartenDistance,
+      restaurantDistance,
+      collegeDistance,
+      pharmacyDistance,
+    ]
+  missing_flag_cols: [floor, buildYear, type, buildingMaterial, condition]
+  derived: [age, floor_ratio, rooms_per_m2, is_top_floor, is_ground_floor, min_amenity_dist, mean_amenity_dist, amenity_score]
+  dropped: [id, price, __month]   # id/price odrzucane przy podziale, __month w feature_engineering
