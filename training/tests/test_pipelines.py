@@ -96,3 +96,10 @@ def test_regression_metrics_perfect():
     m = regression_metrics(y, y)
     assert m["r2"] == 1.0
     assert m["rmse"] == 0.0
+
+
+def test_optimization_model_zoo_has_three_families():
+    from apartment_prices.pipelines.optimization.nodes import _model_zoo
+
+    zoo = _model_zoo(["squareMeters", "rooms"])
+    assert set(zoo) == {"ridge", "hist_gbr", "lightgbm"}

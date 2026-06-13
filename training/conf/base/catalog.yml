@@ -34,3 +34,16 @@ model:
 metrics:
   type: json.JSONDataset
   filepath: data/08_reporting/metrics.json
+
+# --- optimization (etap 4) ---
+leaderboard:
+  type: json.JSONDataset
+  filepath: data/08_reporting/leaderboard.json
+
+tuning_result:
+  type: json.JSONDataset
+  filepath: data/08_reporting/tuning_result.json
+
+optimized_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/optimized_metrics.json

@@ -17,6 +17,7 @@ training/conf/local/**
 !training/conf/local/.gitkeep
 info.log
 logs/
+.viz/
 
 # MLflow
 mlruns/

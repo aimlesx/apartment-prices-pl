@@ -5,7 +5,15 @@ from kedro.pipeline import Pipeline
 
 
 def register_pipelines() -> dict[str, Pipeline]:
-    """Wykryj pipeline'y w pakiecie i złóż domyślny (``__default__``) jako ich sumę."""
+    """Wykryj pipeline'y; domyślny (``__default__``) = baseline (dp -> fe -> modeling).
+
+    Ciężki pipeline ``optimization`` (porównanie + Optuna + rejestracja) jest osobny -
+    uruchamiany jawnie przez ``kedro run --pipeline optimization``.
+    """
     pipelines = find_pipelines()
-    pipelines["__default__"] = sum(pipelines.values(), Pipeline([]))
+    pipelines["__default__"] = (
+        pipelines["data_processing"]
+        + pipelines["feature_engineering"]
+        + pipelines["modeling"]
+    )
     return pipelines

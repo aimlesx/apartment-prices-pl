@@ -1,0 +1,16 @@
+# Izolowane środowisko dla AutoML (PyCaret) - NIE instaluj w głównym venv (decyzja D18).
+# PyCaret sztywno pinuje stare numpy/scikit-learn, które kolidują z Kedro 1.2 +
+# LightGBM + Optuna w jednym rozwiązaniu uv. Dlatego leaderboard porównania modeli
+# liczymy własnym kodem (pipeline `optimization` -> compare_model_families) na NASZYM
+# grouped-holdoutcie. PyCaret jest opcjonalnym, dodatkowym potwierdzeniem.
+#
+# Użycie (osobny venv, Python 3.11 - PyCaret nie ma jeszcze pełnego wsparcia 3.12):
+#   uv venv .venv-automl --python 3.11
+#   source .venv-automl/bin/activate
+#   uv pip install -r training/requirements-automl.txt
+#   # następnie: setup(..., fold_strategy=GroupKFold, fold_groups='id'); compare_models()
+#   # UWAGA: wymuś GroupKFold po id - domyślny losowy fold PyCaret przecieka tożsamość.
+
+pycaret>=3.3
+pandas>=2.0
+scikit-learn

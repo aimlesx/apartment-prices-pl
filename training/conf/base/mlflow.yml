@@ -1,8 +1,19 @@
-# Konfiguracja kedro-mlflow. Pełny plik wygeneruje `kedro mlflow init`.
-# Ustaw mlflow_tracking_uri na http://localhost:5000, gdy działa serwer MLflow.
+# Konfiguracja kedro-mlflow.
+# Backend SQLite (a nie plikowy ./mlruns) - wymagany przez MLflow Model Registry (etap 4).
+# W etapie 5 (docker-compose) tracking URI wskaże serwer MLflow.
 server:
-  mlflow_tracking_uri: null   # null -> lokalny ./mlruns
+  mlflow_tracking_uri: sqlite:///mlflow.db
+  mlflow_registry_uri: sqlite:///mlflow.db
 
 tracking:
   experiment:
     name: apartment-prices
+  # Logowanie do MLflow robimy jawnie w węzłach pipeline'u optimization - wyłączamy
+  # automatyczne runy kedro-mlflow, by uniknąć podwójnego/kolidującego śledzenia.
+  disable_tracking:
+    pipelines:
+      - __default__
+      - data_processing
+      - feature_engineering
+      - modeling
+      - optimization

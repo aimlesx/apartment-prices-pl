@@ -1,0 +1,4 @@
+# Parametry pipeline'u optimization (etap 4).
+optimization:
+  cv_folds: 5          # GroupKFold po id (kontrola wycieku w CV)
+  n_trials: 50         # liczba prób Optuny (TPE) dla LightGBM
