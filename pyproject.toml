@@ -35,11 +35,13 @@ ignore = ["E501"]           # długość linii pilnuje formatter
 [tool.ruff.lint.per-file-ignores]
 # Notebooki: print() i importy w dalszych komórkach to normalna praktyka eksploracyjna.
 "notebooks/**" = ["T201", "E402", "PLR2004"]
-# Testy: literały w asercjach (magic values) + leniwe importy są tu normalne.
-"**/tests/**" = ["PLR2004", "PLC0415"]
+# Testy: literały w asercjach (magic values), leniwe importy i lambdy-mocki są normalne.
+"**/tests/**" = ["PLR2004", "PLC0415", "PLW0108"]
 # Optimization: leniwe importy mlflow/optuna (C0415) i helper o wielu argumentach (R0913).
 "**/pipelines/optimization/nodes.py" = ["PLC0415", "PLR0913"]
+# Serving: leniwy import mlflow (ładowany dopiero przy pierwszej predykcji).
+"serving/apartment_serving/model.py" = ["PLC0415"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --import-mode=importlib"
-testpaths = ["training/tests"]   # serving/tests dołączymy w etapie 5 (serwowanie)
+testpaths = ["training/tests", "serving/tests"]

@@ -25,8 +25,9 @@ pipeline:          ## uruchom cały pipeline Kedro
 viz:               ## wizualizacja grafu pipeline'u
 	cd training && DO_NOT_TRACK=1 uv run kedro viz
 
-serve:             ## lokalny serwis inferencyjny FastAPI
-	uv run --package apartment-prices-serving uvicorn apartment_serving.main:app --reload
+serve:             ## lokalny serwis inferencyjny FastAPI (model z lokalnego rejestru MLflow)
+	MLFLOW_TRACKING_URI=sqlite:///$(CURDIR)/training/mlflow.db \
+		uv run uvicorn apartment_serving.main:app --host 0.0.0.0 --port 8000 --reload
 
 up:                ## cały stack w Dockerze (API + MLflow + Prometheus + Grafana)
 	docker compose -f deploy/docker-compose.yml up --build
