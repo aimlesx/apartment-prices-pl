@@ -1,4 +1,4 @@
-.PHONY: install lock data lint format test pipeline viz serve up down
+.PHONY: install lock data lint format test pipeline viz serve export-model mlflow-ui up down
 
 install:           ## zsynchronizuj środowisko całego workspace
 	uv sync --all-packages
@@ -29,8 +29,16 @@ serve:             ## lokalny serwis inferencyjny FastAPI (model z lokalnego rej
 	MLFLOW_TRACKING_URI=sqlite:///$(CURDIR)/training/mlflow.db \
 		uv run uvicorn apartment_serving.main:app --host 0.0.0.0 --port 8000 --reload
 
-up:                ## cały stack w Dockerze (API + MLflow + Prometheus + Grafana)
+export-model:      ## wyeksportuj model @production z rejestru do deploy/model/ (mount dla Dockera)
+	rm -rf deploy/model
+	MLFLOW_TRACKING_URI=sqlite:///$(CURDIR)/training/mlflow.db \
+		uv run python -c "import mlflow; mlflow.artifacts.download_artifacts('models:/apartment-price-model@production', dst_path='deploy/model')"
+
+mlflow-ui:         ## lokalny MLflow UI (eksperymenty, leaderboard, Optuna) na :5000
+	cd training && uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000
+
+up: export-model   ## stack w Dockerze (API + Prometheus + Grafana); najpierw eksport modelu
 	docker compose -f deploy/docker-compose.yml up --build
 
 down:
-	docker compose -f deploy/docker-compose.yml down
+	docker compose -f deploy/docker-compose.yml down -v

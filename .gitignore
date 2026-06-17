@@ -24,6 +24,9 @@ mlruns/
 mlartifacts/
 mlflow.db
 
+# Wyeksportowany model (mount dla Dockera — artefakt builda, nie do repo)
+deploy/model/
+
 # Artefakty modeli
 *.pkl
 *.joblib

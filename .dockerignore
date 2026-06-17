@@ -8,5 +8,8 @@ notebooks
 docs
 mlruns
 mlartifacts
+training/mlflow.db
+deploy/model
+serving/tests
 *.md
 .pre-commit-config.yaml
