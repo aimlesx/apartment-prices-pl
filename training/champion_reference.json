@@ -1,0 +1,7 @@
+{
+  "r2": 0.9154306565960908,
+  "rmse": 114740.51555353073,
+  "mae": 73156.16262483035,
+  "mape_pct": 9.508160457325742,
+  "note": "Champion etapu 4 (LightGBM po Optunie). Punkt odniesienia dla Continuous Training."
+}

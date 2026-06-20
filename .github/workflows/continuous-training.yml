@@ -1,0 +1,59 @@
+name: Continuous Training
+
+# Zaplanowany retrening (MLOps ścieżka B, T27): pobierz świeże dane z Kaggle,
+# przejdź pełny pipeline Kedro + optymalizację, a następnie porównaj nowego championa
+# z referencyjnym (champion_reference.json). Jeśli bije próg/championa — kwalifikuje się
+# do (re)rejestracji w MLflow (na zdalny rejestr przez sekret MLFLOW_TRACKING_URI).
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # w każdy poniedziałek 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    env:
+      DO_NOT_TRACK: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: System deps (libgomp dla LightGBM)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgomp1
+      - name: Install workspace (frozen)
+        run: uv sync --all-packages --frozen
+
+      - name: Pobierz dataset z Kaggle
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: >
+          uv run --with kaggle kaggle datasets download
+          -d krzysztofjamroz/apartment-prices-in-poland
+          -p training/data/01_raw --unzip
+
+      - name: Trening + optymalizacja (Kedro)
+        working-directory: training
+        env:
+          # Zdalny rejestr MLflow (opcjonalny) — gdy ustawiony, champion rejestruje się tam.
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: |
+          uv run kedro run
+          uv run kedro run --pipeline optimization
+
+      - name: Bramka jakości — czy nowy champion bije referencję?
+        working-directory: training
+        run: uv run python ../scripts/check_retrain.py
+
+      - name: Artefakty metryk retreningu
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrain-metrics
+          path: training/data/08_reporting/*.json

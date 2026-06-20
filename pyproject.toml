@@ -41,6 +41,8 @@ ignore = ["E501"]           # długość linii pilnuje formatter
 "**/pipelines/optimization/nodes.py" = ["PLC0415", "PLR0913"]
 # Serving: leniwy import mlflow (ładowany dopiero przy pierwszej predykcji).
 "serving/apartment_serving/model.py" = ["PLC0415"]
+# Skrypty CLI: print() to ich naturalny interfejs.
+"scripts/**" = ["T201"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --import-mode=importlib"
