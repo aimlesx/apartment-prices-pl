@@ -1,0 +1,39 @@
+flowchart LR
+    kaggle[("Dataset Kaggle<br/>CSV, 11 miesięcy")]
+    subgraph training["Trening — Kedro (apartment_prices)"]
+        direction TB
+        dp["data_processing<br/>ingest + dedup keep-last"]
+        fe["feature_engineering<br/>engineer_features · 26 cech"]
+        md["modeling<br/>baseline LightGBM"]
+        opt["optimization<br/>porównanie 3 rodzin + Optuna"]
+    end
+    subgraph mlflow["MLflow — backend SQLite"]
+        track[("Tracking<br/>eksperymenty + metryki")]
+        reg[("Model Registry<br/>apartment-price-model @production")]
+    end
+    subgraph serving["Serwowanie"]
+        api["FastAPI<br/>/predict · /health · /metrics"]
+    end
+    subgraph monitoring["Monitoring"]
+        prom["Prometheus"]
+        graf["Grafana<br/>dashboardy"]
+    end
+    subgraph cicd["CI/CD — GitHub Actions"]
+        ci["CI<br/>ruff + pytest"]
+        cd["CD<br/>build → ghcr.io"]
+        ct["Continuous Training<br/>retrain wg harmonogramu"]
+    end
+
+    kaggle -->|make data| dp --> fe --> md
+    fe --> opt
+    md -->|metryki| track
+    opt -->|runy| track
+    opt -->|rejestracja championa| reg
+    reg -->|load @production| api
+    api -->|/metrics| prom --> graf
+    cd -->|obraz Docker| api
+    ct -->|retrain| opt
+    ct -.->|re-rejestracja gdy bije championa| reg
+
+    classDef accent fill:#dbeafe,stroke:#2563eb,stroke-width:2px;
+    class opt,reg,api accent;
