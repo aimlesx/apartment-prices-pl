@@ -1,5 +1,6 @@
 {
   "annotations": { "list": [] },
+  "uid": "apartment-api",
   "editable": true,
   "schemaVersion": 39,
   "title": "Apartment Price API — monitoring",

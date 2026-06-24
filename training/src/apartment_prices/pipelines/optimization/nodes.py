@@ -8,6 +8,7 @@ Trzy kroki, wszystkie logowane do MLflow (lokalny backend SQLite - wspiera Regis
    wraz z sygnaturą, ``input_example`` i kodem cech (``code_paths``).
 """
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -33,17 +34,17 @@ from apartment_prices.pipelines.modeling.nodes import regression_metrics
 
 EXPERIMENT = "apartment-prices"
 REGISTERED_MODEL = "apartment-price-model"
+MIN_PRODUCTION_R2 = 0.89  # champion musi co najmniej dorównać baseline (~0.8917)
 
 
 def _setup_mlflow():
     import mlflow
 
-    mlflow.set_tracking_uri("sqlite:///mlflow.db")
-    mlflow.set_registry_uri("sqlite:///mlflow.db")
-    if mlflow.get_experiment_by_name(EXPERIMENT) is None:
-        mlflow.create_experiment(
-            EXPERIMENT, artifact_location=str(Path("mlartifacts").resolve())
-        )
+    # Czytaj URI ze środowiska - pozwala Continuous Training rejestrować na ZDALNYM
+    # rejestrze (MLFLOW_TRACKING_URI), a lokalnie domyśla się backendu SQLite.
+    uri = os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")
+    mlflow.set_tracking_uri(uri)
+    mlflow.set_registry_uri(os.getenv("MLFLOW_REGISTRY_URI", uri))
     mlflow.set_experiment(EXPERIMENT)
     return mlflow
 
@@ -276,7 +277,26 @@ def register_champion(
     metrics = regression_metrics(y_test.to_numpy(), preds)
 
     code_path = str(Path("src/apartment_prices").resolve())
-    signature = infer_signature(X_test.head(20), preds[:20])
+    # Sygnatura DETERMINISTYCZNA i zgodna z kontraktem API: 11 cech wymaganych,
+    # 15 opcjonalnych (required=False). Wymuszamy NaN w kolumnach opcjonalnych, aby
+    # MLflow oznaczył je jako opcjonalne niezależnie od próbki (spójność z Pydantic).
+    required_cols = {
+        "city",
+        "squareMeters",
+        "rooms",
+        "latitude",
+        "longitude",
+        "centreDistance",
+        "ownership",
+        "hasParkingSpace",
+        "hasBalcony",
+        "hasSecurity",
+        "hasStorageRoom",
+    }
+    optional_cols = [c for c in X_test.columns if c not in required_cols]
+    sig_example = X_test.head(20).copy()
+    sig_example.loc[sig_example.index[0], optional_cols] = np.nan
+    signature = infer_signature(sig_example, preds[:20])
     with _run(mlflow, "champion_lightgbm"):
         mlflow.log_params({f"lgbm_{k}": v for k, v in tuning["best_params"].items()})
         mlflow.log_metrics({f"holdout_{k}": v for k, v in metrics.items()})
@@ -290,9 +310,14 @@ def register_champion(
             registered_model_name=REGISTERED_MODEL,
         )
 
-    # Promocja do aliasu 'production' tylko gdy holdout mieści się w ~5% CV-RMSE.
+    # Promocja do aliasu 'production' tylko gdy holdout mieści się w ~5% CV-RMSE
+    # ORAZ champion co najmniej dorównuje baseline (zabezpieczenie przed degeneracją,
+    # np. niepełnym strojeniem Optuny). Inaczej alias zostaje na poprzedniej wersji.
     client = MlflowClient()
-    promoted = metrics["rmse"] <= tuning["best_cv_rmse"] * 1.05
+    promoted = (
+        metrics["rmse"] <= tuning["best_cv_rmse"] * 1.05
+        and metrics["r2"] >= MIN_PRODUCTION_R2
+    )
     if promoted:
         client.set_registered_model_alias(
             REGISTERED_MODEL, "production", info.registered_model_version

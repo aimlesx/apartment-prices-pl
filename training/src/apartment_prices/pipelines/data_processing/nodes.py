@@ -39,7 +39,7 @@ def deduplicate_and_clean(ingested: pd.DataFrame, params: dict) -> pd.DataFrame:
     oczekiwanym zakresie (dane Kaggle są wstępnie przycięte do 150k-3,25M PLN).
     """
     df = (
-        ingested.sort_values(["id", "__month"])
+        ingested.sort_values(["id", "__month"], kind="mergesort")
         .drop_duplicates(subset="id", keep="last")
         .reset_index(drop=True)
     )

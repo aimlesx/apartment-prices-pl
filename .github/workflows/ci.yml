@@ -18,6 +18,9 @@ jobs:
         with:
           enable-cache: true
 
+      - name: System deps (libgomp dla LightGBM)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgomp1
+
       - name: Install workspace (frozen lock, all packages)
         run: uv sync --all-packages --frozen
 

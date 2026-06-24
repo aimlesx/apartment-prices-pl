@@ -1,4 +1,4 @@
-.PHONY: install lock data lint format test pipeline viz serve export-model mlflow-ui up down
+.PHONY: install lock data lint format test pipeline optimize viz serve export-model mlflow-ui up down
 
 install:           ## zsynchronizuj środowisko całego workspace
 	uv sync --all-packages
@@ -19,8 +19,11 @@ format:            ## ruff: auto-format
 test:              ## testy (training + serving)
 	uv run pytest
 
-pipeline:          ## uruchom cały pipeline Kedro
+pipeline:          ## pipeline Kedro: baseline (BEZ rejestracji championa)
 	cd training && DO_NOT_TRACK=1 uv run kedro run
+
+optimize:          ## porównanie modeli + Optuna + rejestracja championa (@production)
+	cd training && DO_NOT_TRACK=1 uv run kedro run --pipeline optimization
 
 viz:               ## wizualizacja grafu pipeline'u
 	cd training && DO_NOT_TRACK=1 uv run kedro viz

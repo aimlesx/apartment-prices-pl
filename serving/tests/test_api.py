@@ -36,12 +36,13 @@ def test_health_and_predict(monkeypatch):
     assert resp.json()["price_pln"] == 500_000.0
 
 
-def test_predict_rejects_missing_required():
+def test_predict_rejects_missing_required(monkeypatch):
     from apartment_serving import main
 
-    monkeypatch_client = TestClient(main.app)
+    monkeypatch.setattr(main, "get_model", lambda: _DummyModel())
+    client = TestClient(main.app)
     bad = {k: v for k, v in REQUIRED_PAYLOAD.items() if k != "squareMeters"}
-    assert monkeypatch_client.post("/predict", json=bad).status_code == 422
+    assert client.post("/predict", json=bad).status_code == 422
 
 
 def test_to_frame_contract():

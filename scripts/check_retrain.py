@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 MIN_R2 = 0.85
+REGRESSION_MARGIN = 0.005  # tolerancja szumu; poniżej (champion - margines) = regresja
 REPORT = Path("data/08_reporting/optimized_metrics.json")
 REFERENCE = Path("champion_reference.json")
 
@@ -19,12 +20,13 @@ REFERENCE = Path("champion_reference.json")
 def main() -> int:
     new = json.loads(REPORT.read_text())
     ref = json.loads(REFERENCE.read_text()) if REFERENCE.exists() else {"r2": MIN_R2}
-    beats = new["r2"] >= ref["r2"]
+    threshold = max(MIN_R2, ref["r2"] - REGRESSION_MARGIN)
+    beats = new["r2"] >= threshold
 
     verdict = (
         "✅ NOWY MODEL BIJE CHAMPIONA — kwalifikuje się do (re)rejestracji"
         if beats
-        else "ℹ️ Nowy model nie bije championa — bez re-rejestracji"
+        else "❌ REGRESJA — nowy model nie dorównuje championowi (bez re-rejestracji)"
     )
     report = "\n".join(
         [
@@ -41,8 +43,11 @@ def main() -> int:
     if summary_path:
         Path(summary_path).write_text(report + "\n")
 
-    if new["r2"] < MIN_R2:
-        print(f"::error::R²={new['r2']:.4f} poniżej progu {MIN_R2} — regresja jakości!")
+    if not beats:
+        print(
+            f"::error::R²={new['r2']:.4f} poniżej progu {threshold:.4f} "
+            f"(champion {ref['r2']:.4f}) — regresja jakości!"
+        )
         return 1
     return 0
 

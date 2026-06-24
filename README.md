@@ -43,15 +43,15 @@ rozjazdu cech między treningiem a serwowaniem. Szczegóły: [docs/architecture.
 ```bash
 make install     # środowisko całego workspace (uv sync --all-packages)
 make data        # rozpakuj archive.zip (z Kaggle) -> training/data/01_raw/
-make pipeline    # pipeline Kedro: trening baseline
-make serve       # serwis FastAPI na http://localhost:8000 (model z rejestru @production)
+make pipeline    # baseline Kedro (metryka odniesienia)
+make optimize    # porównanie + Optuna + REJESTRACJA championa (apartment-price-model @production)
+make serve       # serwis FastAPI na http://localhost:8000 (ładuje model @production)
 make up          # pełny stack w Dockerze (API + Prometheus + Grafana)
 ```
 
-Pełne strojenie + rejestracja championa:
-`cd training && DO_NOT_TRACK=1 uv run kedro run --pipeline optimization`.
-Więcej poleceń (MLflow UI, eksport modelu, monitoring): [docs/runbook.md](docs/runbook.md)
-oraz `make help`-owe komentarze w [Makefile](Makefile).
+> `make optimize` MUSI poprzedzać `make serve`/`make up` — to ono rejestruje model
+> `@production`, który ładuje serwis. Więcej poleceń (MLflow UI, eksport modelu,
+> monitoring): [docs/runbook.md](docs/runbook.md).
 
 Dane (`training/data/**`) są **poza gitem** — wersjonujemy tylko strukturę katalogów.
 
@@ -78,6 +78,16 @@ docs/        architektura, model card, runbook, diagram
 scripts/     narzędzia (kontrola jakości Continuous Training)
 .github/     CI/CD (GitHub Actions)
 ```
+
+## Zespół
+
+| Osoba | username | Rola |
+|-------|----------|------|
+| Konrad | kpulwert | rdzeń ML — dane, modelowanie, HPO |
+| Miłosz | miloszorzechowski | infra / MLOps — CI/CD, Docker |
+| Filip | Aimless | platforma / dokumentacja — scaffold, docs, review |
+
+> Repozytorium: https://github.com/aimlesx/apartment-prices-pl
 
 ## Jakość
 
