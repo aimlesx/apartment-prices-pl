@@ -40,5 +40,9 @@ deploy/model/
 .idea/
 .vscode/
 
+# Frontend (web/) — zależności i artefakty builda (poza repo; package-lock.json JEST commitowany)
+web/node_modules/
+web/dist/
+
 # Dokumenty wewnętrzne (planowanie / notatki — poza repozytorium)
 internals/

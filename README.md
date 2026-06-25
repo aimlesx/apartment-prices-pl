@@ -36,6 +36,7 @@ rozjazdu cech między treningiem a serwowaniem. Szczegóły: [docs/architecture.
 
 - Python 3.12, [uv](https://docs.astral.sh/uv/)
 - **libomp** (LightGBM): macOS `brew install libomp`, Debian/Ubuntu `apt-get install libgomp1`
+- (opcjonalnie) Node ≥ 20 — frontend demo (`make ui`)
 - (opcjonalnie) Docker + `docker compose` — pełny stack serwowania i monitoringu
 
 ## Szybki start
@@ -46,6 +47,7 @@ make data        # rozpakuj archive.zip (z Kaggle) -> training/data/01_raw/
 make pipeline    # baseline Kedro (metryka odniesienia)
 make optimize    # porównanie + Optuna + REJESTRACJA championa (apartment-price-model @production)
 make serve       # serwis FastAPI na http://localhost:8000 (ładuje model @production)
+make ui          # frontend demo (React) na http://localhost:5173 — wymaga działającego API
 make up          # pełny stack w Dockerze (API + Prometheus + Grafana)
 ```
 
@@ -72,6 +74,7 @@ Dane (`training/data/**`) są **poza gitem** — wersjonujemy tylko strukturę k
 ```
 training/    pakiet Kedro (apartment_prices): conf, data (8 warstw), pipelines, tests
 serving/     serwis FastAPI (apartment_serving): schemas, model, main, Dockerfile
+web/         frontend demo (Vite + React + TS): formularz cech -> predykcja ceny
 deploy/      docker-compose (API + Prometheus + Grafana)
 monitoring/  Prometheus + Grafana (provisioning: datasource + dashboard)
 docs/        architektura, model card, runbook, diagram
@@ -85,7 +88,7 @@ scripts/     narzędzia (kontrola jakości Continuous Training)
 |-------|----------|------|
 | Konrad | kpulwert | rdzeń ML — dane, modelowanie, HPO |
 | Miłosz | miloszorzechowski | infra / MLOps — CI/CD, Docker |
-| Filip | Aimless | platforma / dokumentacja — scaffold, docs, review |
+| Filip | Aimless | platforma / dokumentacja / frontend — scaffold, docs, demo UI, review |
 
 > Repozytorium: https://github.com/aimlesx/apartment-prices-pl
 

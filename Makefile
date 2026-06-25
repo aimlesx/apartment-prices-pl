@@ -1,4 +1,4 @@
-.PHONY: install lock data lint format test pipeline optimize viz serve export-model mlflow-ui up down
+.PHONY: install lock data lint format test pipeline optimize viz serve export-model mlflow-ui up down ui
 
 install:           ## zsynchronizuj środowisko całego workspace
 	uv sync --all-packages
@@ -45,3 +45,6 @@ up: export-model   ## stack w Dockerze (API + Prometheus + Grafana); najpierw ek
 
 down:
 	docker compose -f deploy/docker-compose.yml down -v
+
+ui:                ## frontend demo (Vite + React) na :5173 — proxy /predict do API (API_TARGET, dom. :8000)
+	cd web && npm install && npm run dev

@@ -1,0 +1,6 @@
+# zależności i artefakty builda (poza repo)
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
+.vite/

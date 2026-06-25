@@ -1,0 +1,241 @@
+:root {
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1c2533;
+  --muted: #6b7787;
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --error-text: #b91c1c;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 64px;
+}
+
+.header h1 {
+  margin: 0 0 6px;
+  font-size: 1.7rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.field-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.field-label .unit {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 16px;
+  margin: 20px 0 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.toggles legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.advanced {
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.advanced > summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 500;
+  list-style: none;
+  user-select: none;
+}
+
+.advanced > summary::before {
+  content: "+ ";
+  font-weight: 600;
+}
+
+.advanced[open] > summary::before {
+  content: "− ";
+}
+
+.advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced .grid {
+  margin-top: 16px;
+}
+
+.submit {
+  width: 100%;
+  margin-top: 22px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.error {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  color: var(--error-text);
+  font-size: 0.92rem;
+}
+
+.result {
+  margin-top: 18px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.result-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.result-price {
+  margin: 4px 0 2px;
+  color: var(--accent);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.result-permeter {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.result-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 520px) {
+  .grid,
+  .toggles {
+    grid-template-columns: 1fr;
+  }
+}

@@ -56,6 +56,29 @@ Pola **wymagane** (11): `city, squareMeters, rooms, latitude, longitude, centreD
 ownership, hasParkingSpace, hasBalcony, hasSecurity, hasStorageRoom`. Pozostałe 15 są
 opcjonalne. Dokumentacja interaktywna: `http://localhost:8000/docs`.
 
+## 4a. Frontend demo (`web/`)
+
+Prosty kalkulator ceny (Vite + React + TS) — wypełniasz cechy mieszkania, a aplikacja
+zwraca przewidywaną cenę z `POST /predict`. Po wyborze miasta współrzędne uzupełniają się
+automatycznie, a pola opcjonalne są pod „Więcej szczegółów".
+
+```bash
+make serve            # terminal A: API (zob. niżej, jeśli :8000 zajęty)
+make ui               # terminal B: frontend na http://localhost:5173
+```
+
+Żądania `/predict` trafiają do API przez proxy serwera deweloperskiego Vite (bez CORS-a,
+bez zmian w serwisie). Domyślnie kierują na `:8000`; gdy port jest zajęty, uruchom API na
+innym porcie i wskaż go frontendowi:
+
+```bash
+MODEL_URI=deploy/model uv run uvicorn apartment_serving.main:app --port 8200   # API na :8200
+API_TARGET=http://localhost:8200 make ui                                        # front -> :8200
+```
+
+`web/` jest poza workspace uv (brak `pyproject.toml`) — nie wpływa na `uv sync`, `ruff`,
+`pytest` ani na obraz Dockera. Wersja produkcyjna: `npm run build` → pliki statyczne w `web/dist/`.
+
 ## 5. Pełny stack w Dockerze (API + Prometheus + Grafana)
 
 ```bash
